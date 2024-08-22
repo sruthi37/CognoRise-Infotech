@@ -1,0 +1,128 @@
+import random
+
+# Words for the game to choose
+words = ["python", "hangman", "programming", "developer", "interface", "random", "guess", "letters"]
+
+# All the Hangman stages
+hangman_stages = [
+    """
+     -----
+     |   |
+         |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+     |   |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|   |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+    /    |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+    / \\  |
+         |
+    =========
+    """
+]
+
+def select_random_word(word_list):
+    return random.choice(word_list)
+
+def display_game_state(word, guessed_letters, incorrect_guesses):
+    display_word = ' '.join([letter if letter in guessed_letters else '_' for letter in word])
+    print(hangman_stages[len(incorrect_guesses)])
+    print(f"Word: {display_word}")
+    print(f"Incorrect guesses: {', '.join(incorrect_guesses)}")
+    print()
+
+def get_user_guess():
+    while True:
+        guess = input("Guess a letter: ").lower()
+        if len(guess) == 1 and guess.isalpha():
+            return guess
+        print("Invalid input. Please enter a single letter.")
+
+def play_hangman():
+    word = select_random_word(words)
+    guessed_letters = set()
+    incorrect_guesses = []
+
+    print("Welcome to Hangman!")
+
+    while True:
+        display_game_state(word, guessed_letters, incorrect_guesses)
+
+        guess = get_user_guess()
+
+        if guess in guessed_letters or guess in incorrect_guesses:
+            print(f"You already guessed '{guess}'. Try another letter.")
+            continue
+
+        if guess in word:
+            guessed_letters.add(guess)
+            if set(word) <= guessed_letters:
+                display_game_state(word, guessed_letters, incorrect_guesses)
+                print("Congratulations! You guessed the word correctly.")
+                break
+        else:
+            incorrect_guesses.append(guess)
+            if len(incorrect_guesses) == len(hangman_stages) - 1:
+                display_game_state(word, guessed_letters, incorrect_guesses)
+                print(f"You lost! The word was '{word}'.")
+                break
+
+def main():
+    while True:
+        play_hangman()
+        play_again = input("Do you want to play again? (yes/no): ").lower()
+        if play_again != 'yes':
+            break
+    print("Thank you for playing!")
+
+if __name__ == "__main__":
+    main()
